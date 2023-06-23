@@ -3,6 +3,10 @@ package com.Hostbook.rupak.Controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,37 +19,40 @@ import com.Hostbook.rupak.Exception.EmployeeException;
 import com.Hostbook.rupak.Service.EmployeeServiceImpl;
 import com.Hostbook.rupak.model.Employee;
 
+import jakarta.validation.Valid;
+
 @RestController
+@CrossOrigin(origins = "*")
 public class EmployeeController {
 
 	@Autowired
 	private EmployeeServiceImpl service;
 	
 	
-	 @PostMapping
-	    public String createEmployee(@RequestBody Employee employee) {
-	        return service.createEmployee(employee);
+	 @PostMapping("/employees")
+	    public ResponseEntity<String> createEmployee(@Valid @RequestBody Employee employee) {
+	        return new ResponseEntity<String>(service.createEmployee(employee), HttpStatus.CREATED) ;
 	    }
 
-	    @GetMapping
-	    public List<Employee> getAllEmployees() {
-	        return service.getEmployeeList();
+	    @GetMapping("/employees")
+	    public ResponseEntity<List<Employee>> getAllEmployees() {
+	        return new ResponseEntity<List<Employee>>( service.getEmployeeList(),HttpStatus.OK);
 	    }
 
-	    @GetMapping("/{id}")
-	    public Employee getEmployeeById(@PathVariable("id") Long id) throws EmployeeException {
-	        return service.showEmployee(id);
+	    @GetMapping("/employees/{id}")
+	    public ResponseEntity<Employee> getEmployeeById(@PathVariable("id") Long id) throws EmployeeException {
+	        return new ResponseEntity<Employee>( service.showEmployee(id),HttpStatus.OK);
 	    }
 
-	    @PutMapping("/{id}")
-	    public String updateEmployee(@PathVariable("id") Long id, @RequestBody Employee employee) {
+	    @PutMapping("/employees/{id}")
+	    public ResponseEntity<String> updateEmployee(@PathVariable("id") Long id,@Valid @RequestBody Employee employee) {
 	        employee.setId(id);
-	        return service.updateEmployee(id, employee);
+	        return new ResponseEntity<String>( service.updateEmployee(id, employee),HttpStatus.OK);
 	    }
 
-	    @DeleteMapping("/{id}")
-	    public String deleteEmployee(@PathVariable("id") Long id) throws EmployeeException {
-	        return service.deleteEmployee(id);
+	    @DeleteMapping("/employees/{id}")
+	    public ResponseEntity<String> deleteEmployee(@PathVariable("id") Long id) throws EmployeeException {
+	        return new ResponseEntity<String>( service.deleteEmployee(id),HttpStatus.OK);
 	    }
 	
 	
